@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <input type="button" ng-click="requestData()" value="click">
+    </br>
+    <!-- default filter -->
+    Search: <input type="text" ng-model="Search">
+    <!-- 正常版本 -->
+    <table>
+        <tr>
+            <!-- 實作1 自訂過濾器-->
+            <th><a href="" ng-click="sortRule='id'">id</a></th>
+            <th><a href="" ng-click="sortRule='name'">name</a></th>
+            <th><a href="" ng-click="sortRule='year'">year</a></th>
+            <th><a href="" ng-click="sortRule='color'">color</a></th>
+            <th><a href="" ng-click="sortRule='pantone_value'">pantone_value</a></th>
+        </tr>
+        <!-- default filter -->
+        <!-- 實作1 過濾器-->
+        <tr ng-repeat="arr in arrs |filter:Search| orderBy:sortRule">
+            <td>{{arr.id}}</td>
+            <td>{{arr.name}}</td>
+            <td>{{arr.year}}</td>
+            <td>{{arr.color}}</td>
+            <td>{{arr.pantone_value}}</td>
+        </tr>
+    </table>
+ 
+    <!-- reverse版本 -->
+    <table>
+        <tr>
+            <!-- 實作1 自訂過濾器-->
+            <th><a href="" ng-click="sortRule='id'">id</a></th>
+            <th><a href="" ng-click="sortRule='name'">name</a></th>
+            <th><a href="" ng-click="sortRule='year'">year</a></th>
+            <th><a href="" ng-click="sortRule='color'">color</a></th>
+            <th><a href="" ng-click="sortRule='pantone_value'">pantone_value</a></th>
+        </tr>
+        <!-- default filter -->
+        <!-- 實作1 過濾器-->
+        <tr ng-repeat="arr in arrs |filter:Search| orderBy:sortRule">
+            <td>{{arr.id}}</td>
+            <td>{{arr.name}}</td>
+            <td>{{arr.year}}</td>
+            <td>{{arr.color}}</td>
+            <td>{{arr.pantone_value}}</td>
+        </tr>
+    </table>    
+
+</body>
+<script>
+    var myApp = angular.module("myApp",[]);
+    myApp.controller("myCtrl",function($scope,$timeout,$http){
+        $scope.sortRule = "id";
+        $scope.name = "chen";
+        $scope.arrs = ["chen","kou","Wu"]
+        $scope.$watch("name",function(newValue,old){
+            console.log(newValue);
+        });
+        $scope.remove = function(arr){
+            var index = $scope.arrs.indexOf(arr);
+            if(index!=-1){
+                $scope.arrs.splice(index,1);
+            }
+            alert(arr);
+        }
+        setTimeout(function(){
+            $scope.name ="Richard";  
+            // $scope.$apply();  
+        }, 3000);
+        $timeout(function(){
+            $scope.name ="Tim";  
+        },2000);
+        $scope.click = function(){
+            console.log("click");
+        }
+        function click(){
+            console.log("click");
+        }
+        $scope.addData = function(){
+            alert($scope.myName);
+            $scope.arrs.push($scope.myName);
+            $scope.myName="";
+        }
+        $scope.objs =[
+            {"name":"chen","no":3},
+            {"name":"Kou","no":2},
+            {"name":"Tim","no":4},
+        ]
+        $scope.requestData = function(){
+            var cors = 'https://cors-anywhere.herokuapp.com/'; // use cors-anywhere to fetch api data
+            var url = 'http://www.runoob.com/try/angularjs/data/sites.php'; // origin api url
+            // $http({config}).then(f1,f2);
+            $http({
+                method:"GET",
+                url:"https://reqres.in/api/products"
+            }).then(function success(rsp){
+                console.log("success");
+                console.log(rsp);
+                $scope.arrs = [];
+                var jsonData =rsp.data.data;
+                // for (var index = 0; index < jsonData.length; index++) {
+                //     $scope.arrs.name =jsonData[index].name;
+                //     $scope.arrs.year =jsonData[index].year;
+                //     $scope.arrs.colar =jsonData[index].colar;
+                //     $scope.arrs.pantone_value =jsonData[index].pantone_value;
+                // }
+                $scope.arrs=jsonData;
+            },function fail(rsp){
+                console.log("fail");
+                console.log(rsp);
+            });
+        }
+    });
+
+</script>
+</html>
